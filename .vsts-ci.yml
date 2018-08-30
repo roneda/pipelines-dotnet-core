@@ -4,7 +4,8 @@
 queue: Hosted Linux Preview
 variables:
   buildConfiguration: 'Release'
-  dockerId: adventworks  # change this to match your Docker Id
+  dockerId: registrotime4openhack  # change this to match your Docker Id
+  dockerPassword: huTrZrKBOHX96So=KzbPhfbCctEyEpTL
 
 steps:
 - script: |
