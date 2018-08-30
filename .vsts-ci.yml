@@ -1,20 +1,18 @@
 # Build ASP.NET Core project using VSTS
 # https://docs.microsoft.com/vsts/pipelines/languages/dotnet-core?view=vsts
 
-queue: 'Hosted Linux Preview'
-
+queue: Hosted Linux Preview
 variables:
   buildConfiguration: 'Release'
+  dockerId: adventworks  # change this to match your Docker Id
 
 steps:
 - script: |
     dotnet build --configuration $(buildConfiguration)
     dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
-    dotnet publish --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-
-- task: PublishTestResults@2
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-
-- task: PublishBuildArtifacts@1
+    dotnet publish --configuration $(buildConfiguration) --output out
+    docker build -t $(dockerId).azurecr.io/dotnetcore-sample:$BUILD_BUILDID .
+    docker login -u $(dockerId) -p $pswd $(dockerid).azurecr.io
+    docker push $(dockerId).azurecr.io/dotnetcore-sample:$BUILD_BUILDID
+  env:
+    pswd: $(dockerPassword)
